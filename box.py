@@ -13,7 +13,7 @@ class Box:
 
     def construct_boundary_vectors(self):
         '''
-        Construct boundary vectors for checking point in environment
+        Construct boundary vectors and points for checking point in box
         '''
         self.p1 = np.array([0,0,0])+self.origin
         self.p2 = np.array([self.x,0,0])+self.origin
@@ -30,11 +30,13 @@ class Box:
         self.bound2 = [self.v@self.p1,self.v@self.p4]
         self.bound3 = [self.w@self.p1,self.w@self.p5]
 
-    def check_point_inside(self,point):
+    def check_point_inside(self, point):
         '''
-        Check if given point is inside environment
-        Return: True-Inside
-                False:-Outside
+        Check if given point is in the box
+        Args:
+            point: coordinates in 3D
+        Return: 
+            True/False: inside the box or not
         '''
         point = np.array(point)
         if self.bound1[0] > self.u@point or self.u@point > self.bound1[1]:
@@ -48,6 +50,9 @@ class Box:
     def plot(self, ax, a):
         '''
         Plot box in 3D space
+        Args:
+            ax: matplotlib.pyplot axes
+            a: alpha of polygon
         '''
         verts = [[self.p1,self.p2,self.p3,self.p4],
                  [self.p5,self.p6,self.p7,self.p8],
@@ -55,7 +60,7 @@ class Box:
                  [self.p3,self.p4,self.p8,self.p7],
                  [self.p1,self.p2,self.p6,self.p5],
                  [self.p1,self.p4,self.p8,self.p5],]
-        ax.add_collection3d(Poly3DCollection(verts, facecolors='cyan', linewidths=1, edgecolors='r', alpha=.20))
+        ax.add_collection3d(Poly3DCollection(verts, facecolors='cyan', linewidths=1, edgecolors='r', alpha=a))
 
 
 
