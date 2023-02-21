@@ -38,6 +38,12 @@ class Box:
         Return: 
             True/False: inside the box or not
         '''
+        if point[0]<self.origin[0] or point[0]>self.x+self.origin[0] or \
+            point[1]<self.origin[1] or point[1]>self.y+self.origin[1] or \
+                point[2]<self.origin[2] or point[2]>self.z+self.origin[2]:
+                return False
+        return True
+        '''
         point = np.array(point)
         if self.bound1[0] > self.u@point or self.u@point > self.bound1[1]:
             return False
@@ -46,13 +52,16 @@ class Box:
         if self.bound3[0] > self.w@point or self.w@point > self.bound3[1]:
             return False
         return True
+        '''
     
-    def plot(self, ax, a):
+    def plot(self, ax, color, linewidth, a):
         '''
         Plot box in 3D space
         Args:
             ax: matplotlib.pyplot axes
-            a: alpha of polygon
+            color: color of polygon
+            linewidth: width of boundary line
+            a: alpha
         '''
         verts = [[self.p1,self.p2,self.p3,self.p4],
                  [self.p5,self.p6,self.p7,self.p8],
@@ -60,7 +69,7 @@ class Box:
                  [self.p3,self.p4,self.p8,self.p7],
                  [self.p1,self.p2,self.p6,self.p5],
                  [self.p1,self.p4,self.p8,self.p5],]
-        ax.add_collection3d(Poly3DCollection(verts, facecolors='cyan', linewidths=1, edgecolors='r', alpha=a))
+        ax.add_collection3d(Poly3DCollection(verts, facecolors=color, linewidths=linewidth, edgecolors='r', alpha=a))
 
 
 

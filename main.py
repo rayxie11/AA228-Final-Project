@@ -2,17 +2,41 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from box import Box
+from environment import Environment
+from wind import Wind
+from quadcopter import Quadcopter
 
-box = Box([1,2,3],[1,1,1])
+env_origin = [0,0,0]
+env_dim = [20,20,20]
+
+obs_origin = [5,3,3]
+obs_dim = [4,4,4]
+obs = [Box(obs_dim,obs_origin)]
+
+w_origin = [12,12,12]
+w_dim = [5,5,5]
+d = [1.5,1,1.3]
+w = [Wind(w_dim,w_origin,d)]
+
+env = Environment(env_dim,env_origin,obs,w)
+
+vehicle = Quadcopter([14,14,14])
+T = vehicle.transition_probability(env)
+print(T)
+
+box = Box([10,10,10],[0,0,0])
+print(box.check_point_inside([5,5,5]))
+#box = Box([0,0,0],[10,10,10])
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-box.plot(ax,a=0.3)
-ax.set_xlim([-5,5])
-ax.set_ylim([-5,5])
-ax.set_zlim([-5,5])
-ax.set_xticks([])
-ax.set_yticks([])
-ax.set_zticks([])
+#box.plot(ax,a=0.3)
+env.plot_env(ax)
+ax.set_xlim([-1,30])
+ax.set_ylim([-5,30])
+ax.set_zlim([-5,30])
+#ax.set_xticks([])
+#ax.set_yticks([])
+#ax.set_zticks([])
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')

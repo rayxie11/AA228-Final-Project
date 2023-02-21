@@ -43,3 +43,16 @@ class Environment(Box):
                 return i
         return -1
     
+    def plot_env(self, ax):
+        '''
+        Plot the entire environment
+        Args:
+            ax: matplotlib.pyplot axes
+        '''
+        self.plot(ax, 'cyan', 0, 0.2)
+        for obs in self.obstacles:
+            obs.plot(ax, 'black', 0, 1)
+        for w in self.wind:
+            w.plot(ax, 'red', 0, 0.5)
+            w.plot_wind(ax)
+    
