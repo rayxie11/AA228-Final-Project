@@ -4,15 +4,17 @@ import numpy as np
 action2move = {0:(1,0,0), 1:(0,1,0), 2:(0,0,1),
            3:(-1,0,0), 4:(0,-1,0), 5:(0,0,-1),
            6:(1,1,1), 7:(1,-1,1), 8:(-1,1,1), 9:(-1,-1,1),
-           10:(1,1,-1), 11:(1,-1,-1), 12:(-1,1,-1), 13:(-1,-1,-1)}
+           10:(1,1,-1), 11:(1,-1,-1), 12:(-1,1,-1), 13:(-1,-1,-1),
+           14:(0,0,0)}
 actions = []
 for a in action2move.keys():
     action2move[a] = np.array(action2move[a])
     actions.append(a)
 
 class Quadcopter:
-    def __init__(self, init_s):
-        self.s = np.array(init_s)
+    def __init__(self, s):
+        self.s = np.array(s)
+        self.a_count = len(actions)
     
     def generate_valid_actions(self, environment):
         '''
@@ -41,7 +43,7 @@ class Quadcopter:
         '''
         return environment.check_state_in_wind(self.s)
     
-    def transition_probability(self, enviroment):
+    def transition_probability(self, environment):
         '''
         Get the probability of transitioning to the next state without any control input
         The smaller different between wind direction and move direction, the higher probability
@@ -51,22 +53,71 @@ class Quadcopter:
         Return:
         '''
         probability = []
-        valid_action_mask = self.generate_valid_actions(enviroment)
-        wind_idx = self.in_wind(enviroment)
+        valid_action_mask = self.generate_valid_actions(environment)
+        wind_idx = self.in_wind(environment)
         if wind_idx == -1:
             probability = valid_action_mask/np.sum(valid_action_mask)
         else:
-            w = enviroment.wind[wind_idx].wind_vec
+            w = environment.wind[wind_idx].wind_vec
             w /= np.linalg.norm(w)
             for i in range(len(valid_action_mask)):
                 if valid_action_mask[i] == 0:
                     probability.append(0)
                 else:
                     a = action2move[i]
-                    diff = 1/np.linalg.norm(w-a/np.linalg.norm(a))
-                    print(diff)
+                    # Use np.exp to avoid divide by 0 exception
+                    if np.linalg.norm(a) == 0:
+                        diff = 1/np.exp(np.linalg.norm(w))
+                    else:
+                        diff = 1/np.exp(np.linalg.norm(w-a/np.linalg.norm(a)))
+                    #print(np.linalg.norm(w-a/np.linalg.norm(a)))
                     probability.append(diff)
             probability = probability/np.sum(probability)
-        return probability
+        return np.array(probability)
+    
+    def naive_next_state(self, action, environment):
+        '''
+        Update quadcopter state given action
+        '''
+        potential_s = self.s+action2move[action]
+        if environment.check_state_in_bound(potential_s):
+                if environment.check_state_in_obstacle(potential_s) == -1:
+                    self.s += action2move[action]
+
+    def next_state(self, environment):
+        '''
+        Calculate the next state with the transition probability
+        Args:
+            action: given action
+            environment: environment quadcopter is in
+        Return:
+            action: index of actual action taken
+        '''
+        T = self.transition_probability(environment)
+        print(T)
+        action = np.random.choice(actions,1,p=T)[0]
+        self.s = self.s+action2move[action]
+        return action
+
+    def next_state1(self, action, environment):
+        '''
+        Calculate the next state given action with the transition probability
+        Args:
+            action: given action
+            environment: environment quadcopter is in
+        Return:
+            action: index of actual action taken
+        '''
+        p = np.random.random(1)[0]
+        # If p <= 0.6, go with given action
+        if p <= 0.6 and action != -1:
+            self.s = self.s+action2move[action]
+        # Otherwise, sample action from transition probability
+        else:
+            T = self.transition_probability(environment)
+            print(T)
+            action = np.random.choice(actions,1,p=T)[0]
+            self.s = self.s+action2move[action]
+        return action
 
 
