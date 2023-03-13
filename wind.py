@@ -2,9 +2,18 @@ import numpy as np
 from box import Box
 
 class Wind(Box):
-    def __init__(self, dims, origin, wind_vec):
+    '''
+    Wind is defined as a constant force field defined by a normal distribution of the given mean and
+    standard deviation. The force of the wind is sampled every time when called. 
+    '''
+    def __init__(self, dims, origin, wind_mean, wind_std):
         super().__init__(dims, origin)
-        self.wind_vec = wind_vec
+        self.mean = np.array(wind_mean)    # Wind vector mean
+        self.cov = np.diag(wind_std)       # Wind vector covariance matrix
+
+    def sample_wind(self):
+       sampled_wind = np.random.multivariate_normal(self.mean, self.cov)
+       return sampled_wind
     
     def plot_wind(self, ax):
         '''
@@ -15,7 +24,7 @@ class Wind(Box):
         XX, YY, ZZ = np.meshgrid(np.arange(self.origin[0],self.origin[0]+self.x,2),
                                  np.arange(self.origin[1],self.origin[1]+self.y,2),
                                  np.arange(self.origin[2],self.origin[2]+self.z,2))
-        w = self.wind_vec/np.linalg.norm(self.wind_vec)
+        w = self.mean/np.linalg.norm(self.mean)
         U = XX+w[0]
         V = YY+w[1]
         W = ZZ+w[2]

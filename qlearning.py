@@ -54,7 +54,7 @@ class QLearning:
                 self.quadcopter.naive_next_state(cur_action, self.env)
             self.Q_table[cur_state[0],cur_state[1],cur_state[2],cur_action] = self.Q_table[cur_state[0],cur_state[1],cur_state[2],cur_action]+ \
                             lr*(self.naive_reward()+gamma*self.Q_table[self.quadcopter.s[0],self.quadcopter.s[1],self.quadcopter.s[2],cur_action]-self.Q_table[cur_state[0],cur_state[1],cur_state[2],cur_action])
-            i += 1
+            #i += 1
     
     
 
