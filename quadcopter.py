@@ -1,11 +1,11 @@
 import numpy as np
 
 # Quadcopter actions
-action2move = {0:(1,0,0), 1:(0,1,0), 2:(0,0,1),
-           3:(-1,0,0), 4:(0,-1,0), 5:(0,0,-1),
-           6:(1,1,1), 7:(1,-1,1), 8:(-1,1,1), 9:(-1,-1,1),
-           10:(1,1,-1), 11:(1,-1,-1), 12:(-1,1,-1), 13:(-1,-1,-1),
-           14:(0,0,0)}
+action2move = {0:(1,0,0), 1:(-1,0,0), 2:(0,1,0), 3:(1,1,0), 4:(-1,1,0), 5:(0,1,1),
+           6:(1,1,1), 7:(-1,1,1), 8:(0,0,1), 9:(1,0,1), 10:(-1,0,1), 11:(0,-1,0),
+           12:(1,-1,0), 13:(-1,-1,0), 14:(0,-1,-1), 15:(1,-1,-1), 16:(-1,-1,-1),
+           17:(0,0,-1), 18:(1,0,-1), 19:(-1,0,-1), 20:(0,1,-1), 21:(1,1,-1),
+           22:(-1,1,-1), 23:(0,-1,1), 24:(1,-1,1), 25:(-1,-1,1)}
 actions = []
 for a in action2move.keys():
     action2move[a] = np.array(action2move[a])
@@ -58,7 +58,7 @@ class Quadcopter:
         if wind_idx == -1:
             probability = valid_action_mask/np.sum(valid_action_mask)
         else:
-            w = environment.wind[wind_idx].wind_vec
+            w = environment.wind[wind_idx].sample_wind()
             w /= np.linalg.norm(w)
             for i in range(len(valid_action_mask)):
                 if valid_action_mask[i] == 0:

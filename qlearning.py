@@ -29,7 +29,7 @@ class QLearning:
         wind_idx = self.quadcopter.in_wind(self.env)
         wind_reward = -5
         if wind_idx != -1:
-            w = self.env.wind[wind_idx].wind_vec
+            w = self.env.wind[wind_idx].sample_wind()
             w /= np.linalg.norm(w)
             diff = np.linalg.norm(w-np.linalg.norm(self.goal_s))
             wind_reward = 1/np.exp(diff)*10

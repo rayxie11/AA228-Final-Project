@@ -16,18 +16,19 @@ obs = [Box(obs_dim,obs_origin)]
 
 w_origin = [12,12,12]
 w_dim = [5,5,5]
-d = [1,1,1]
-w = [Wind(w_dim,w_origin,d)]
+w_mean = [1,1,1]
+w_std = [1,1,1]
+w = [Wind(w_dim,w_origin,w_mean,w_std)]
 
 env = Environment(env_dim,env_origin,obs,w)
 
-'''
+
 start = [1,1,1]
 end = [15,15,15]
 q = QLearning(start, end, env)
 q.naive_qlearning(0.1,0.95)
 q.trajectory = np.array(q.trajectory)
-'''
+
 
 box = Box([10,10,10],[0,0,0])
 print(box.check_point_inside([5,5,5]))
@@ -38,7 +39,7 @@ ax = fig.add_subplot(111, projection='3d')
 env.plot_env(ax)
 ax.scatter(1,1,1,c='r')
 ax.scatter(15,15,15,c='g')
-#ax.scatter(q.trajectory[:,0],q.trajectory[:,1],q.trajectory[:,2],c='black')
+ax.scatter(q.trajectory[:,0],q.trajectory[:,1],q.trajectory[:,2],c='black')
 ax.set_xlim([-1,30])
 ax.set_ylim([-5,30])
 ax.set_zlim([-5,30])
