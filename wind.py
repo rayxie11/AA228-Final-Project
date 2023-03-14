@@ -19,6 +19,19 @@ class Wind(Box):
         '''
         sampled_wind = np.random.multivariate_normal(self.mean, self.cov)
         return sampled_wind
+        
+    def discrete_wind(self):
+        '''
+        Descrete wind distribution
+        Return:
+            discrete_wind: list of tuple, (probability, (velocity))
+        '''
+        discrete_wind = [(0.5, (1, 1, 1)),
+                        (0.3, (2, 2, 2)),
+                        (0.1, (3, 3, 3)),
+                        (0.1, (-3, -3, -3))]
+        
+        return discrete_wind
     
     def plot_wind(self, ax):
         '''
