@@ -12,8 +12,13 @@ class Wind(Box):
         self.cov = np.diag(wind_std)       # Wind vector covariance matrix
 
     def sample_wind(self):
-       sampled_wind = np.random.multivariate_normal(self.mean, self.cov)
-       return sampled_wind
+        '''
+        Sample wind force
+        Return:
+            sampled_wind: sampled wind force vector according a multivariate normal distribution
+        '''
+        sampled_wind = np.random.multivariate_normal(self.mean, self.cov)
+        return sampled_wind
     
     def plot_wind(self, ax):
         '''

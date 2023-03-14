@@ -153,35 +153,41 @@ class KinematicQuadcopter:
         '''
         if ori[0] >= np.pi or ori[1] >= np.pi or ori[2] >= np.pi:
             return False
-        if not env.check_state_in_bound(pos) or env.check_state_in_obstacle(pos):
+        #print("state in bound", env.check_state_in_bound(pos))
+        #print("state in obs", env.check_state_in_obstacle(pos))
+        if not env.check_state_in_bound(pos) or env.check_state_in_obstacle(pos) != -1:
+            #print('here')
             return False
         return True
 
-    def update(self, dt, env):
+    def update(self, dt, env, inputs):
         '''
         Update quadcopter state
         Args:
             dt: time step
             env: environment quadcopter is in
+            inputs: w_i^2 of each motor
+        Return:
+            new_quadcopter: new quadcopter state
         '''
-        #inputs = np.ones(4)*100
-        inputs = np.array([10,10,5,5])
-        #inputs = np.zeros(4)
         temp_w = self.thetadot2omega()
-        a = self.acceleration(inputs)
+        wind_idx = env.check_state_in_wind(self.pos)
+        if wind_idx == -1:
+            a = self.acceleration(inputs, np.zeros(3))
+        else:
+            a = self.acceleration(inputs, env.wind[wind_idx])
         omegadot = self.angular_acceleration(inputs, temp_w)
         temp_w += omegadot*dt
         temp_thetadot = self.omega2thetadot(temp_w)
         temp_ori = self.ori+temp_thetadot*dt
         temp_v = self.v+a*dt
         temp_pos = self.pos+temp_v*dt
+        print(temp_pos, temp_ori)
         if self.check_valid_update(temp_pos, temp_ori, env):
-            self.pos = temp_pos
-            self.ori = temp_ori
-            self.thetadot = temp_thetadot
-            self.v = temp_v
-            return True
+            new_quadcopter = KinematicQuadcopter(temp_pos, temp_v, self.mass, self.dim, self.t_max, self.t_min)
+            return new_quadcopter
         else:
+            #print(temp_pos, temp_ori)
             return False
         '''
         self.thetadot2omega()
@@ -193,5 +199,25 @@ class KinematicQuadcopter:
         self.v += a*dt
         self.pos += self.v*dt
         '''
-
+    
+    def sample(self, env):
+        '''
+        Sample next time step quadcopter state
+        ''' 
+        m1 = np.linspace(self.t_min, self.t_max, num=11)
+        m2 = np.linspace(self.t_min, self.t_max, num=11)
+        m3 = np.linspace(self.t_min, self.t_max, num=11)
+        m4 = np.linspace(self.t_min, self.t_max, num=11)
+        M1, M2, M3, M4 = np.meshgrid(m1,m2,m3,m4)
+        combinations = np.stack([M1, M2, M3, M4], axis=-1)
+        combinations = np.reshape(combinations,(11**4,4))
+        sampled_quadcopter = []
+        for inputs in combinations:
+            #print(inputs)
+            new_quadcopter = self.update(1, env, inputs)
+            #print(new_quadcopter)
+            if new_quadcopter:
+                sampled_quadcopter.append(new_quadcopter)
+            #break
+        return sampled_quadcopter
         
