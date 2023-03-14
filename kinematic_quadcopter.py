@@ -189,7 +189,7 @@ class KinematicQuadcopter:
         else:
             #print(temp_pos, temp_ori)
             return False
-        '''
+        ''' 
         self.thetadot2omega()
         a = self.acceleration(inputs)
         omegadot = self.angular_acceleration(inputs)
