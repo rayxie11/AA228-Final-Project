@@ -23,11 +23,6 @@ dir = [[1,1,1],[2,2,2],[3,3,3],[-3,-3,-3]]
 w = [Wind(w_dim,w_origin,prob,dir)]
 env = Environment(env_dim,env_origin,obs,w)
 
-<<<<<<< HEAD
-
-=======
-#'''
->>>>>>> 409a81e9c752aea147ef20de2dba4602aa5de1b8
 start = [1,1,1]
 end = [15,15,15]
 '''
