@@ -27,8 +27,14 @@ class Environment(Box):
         '''
         for i in range(len(self.obstacles)):
             if self.obstacles[i].check_point_inside(state):
-                return i
-        return -1
+                return True
+        return False
+    
+    def check_valid_state(self, state):
+        '''
+        Check whether the given state is valid: in bounds and not in obstacle
+        '''
+        return self.check_state_in_bound(state) and not self.check_state_in_obstacle(state)
     
     def check_state_in_wind(self, state):
         '''

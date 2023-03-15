@@ -3,22 +3,25 @@ from box import Box
 
 class Wind(Box):
     '''
-    Wind is defined as a constant force field defined by a normal distribution of the given mean and
-    standard deviation. The force of the wind is sampled every time when called. 
+    Wind is defined as a Box object with different directions with respective probabilities
     '''
-    def __init__(self, dims, origin, wind_mean, wind_std):
+    def __init__(self, dims, origin, prob, dir):
         super().__init__(dims, origin)
-        self.mean = np.array(wind_mean)    # Wind vector mean
-        self.cov = np.diag(wind_std)       # Wind vector covariance matrix
+        self.prob = np.array(prob)     # Probability for each direction  
+        self.dir = np.array(dir)       # Directions
+        prob_expanded = np.tile(np.expand_dims(self.prob, axis=-1), (1,3))
+        w = np.mean(prob_expanded*self.dir, axis=0)
+        self.mean = w                  # Mean direction of wind
 
     def sample_wind(self):
         '''
-        Sample wind force
+        Sample the wind according to the probability assigned to each direction
         Return:
-            sampled_wind: sampled wind force vector according a multivariate normal distribution
+            wind_dir: wind direction
         '''
-        sampled_wind = np.random.multivariate_normal(self.mean, self.cov)
-        return sampled_wind
+        idx_arr = np.linspace(0, len(self.dir)-1, num=len(self.dir))
+        dir_idx = int(np.random.choice(idx_arr, 1, p=self.prob)[0])
+        return self.dir[dir_idx]
         
     def discrete_wind(self):
         '''

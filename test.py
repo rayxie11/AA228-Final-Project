@@ -13,12 +13,9 @@ obs = [Box(obs_dim,obs_origin)]
 
 w_origin = [12,12,12]
 w_dim = [5,5,5]
-mean = [1,1,1]
-std = [0.1,0.1,0.1]
-w = [Wind(w_dim,w_origin,mean,std)]
-
-env = Environment(env_dim,env_origin,obs,w)
-
-init_quadcopter = KinematicQuadcopter([0,0,0,0,1,0], [0,0,0,0,0,0], 1, 2, 0, 5)
-x = init_quadcopter.sample(env)
-print(len(x))
+prob = [0.5,0.3,0.1,0.1]
+dir = [[1,1,1],[2,2,2],[3,3,3],[-3,-3,-3]]
+w = Wind(w_dim,w_origin,prob,dir)
+print(w.sample_wind())
+w.plot_wind()
+#env = Environment(env_dim,env_origin,obs,w)

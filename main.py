@@ -18,33 +18,39 @@ obs = [Box(obs_dim,obs_origin)]
 
 w_origin = [8,8,8]
 w_dim = [5,5,5]
-w_mean = [1,1,1]
-w_std = [1,1,1]
-w = [Wind(w_dim,w_origin,w_mean,w_std)]
-
+prob = [0.5,0.3,0.1,0.1]
+dir = [[1,1,1],[2,2,2],[3,3,3],[-3,-3,-3]]
+w = [Wind(w_dim,w_origin,prob,dir)]
 env = Environment(env_dim,env_origin,obs,w)
 
+<<<<<<< HEAD
 
+=======
+#'''
+>>>>>>> 409a81e9c752aea147ef20de2dba4602aa5de1b8
 start = [1,1,1]
 end = [15,15,15]
 '''
 q = QLearning(start, end, env)
 q.naive_qlearning(0.1,0.95)
+print("finished q learning")
 q.trajectory = np.array(q.trajectory)
 '''
 mdp = MDP(start, end, env)
 U, pi = mdp.value_iteration(0.95)
 traj = simulate(start, end, pi, env)
 
+#traj = q.generate_trajectory()
+#print(traj.shape)
+
 box = Box([10,10,10],[0,0,0])
 print(box.check_point_inside([5,5,5]))
-#box = Box([0,0,0],[10,10,10])
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-#box.plot(ax,a=0.3)
 env.plot_env(ax)
 ax.scatter(1,1,1,c='r')
 ax.scatter(15,15,15,c='g')
+
 #ax.scatter(q.trajectory[:,0],q.trajectory[:,1],q.trajectory[:,2],c='black')
 ax.scatter(traj[:,0],traj[:,1],traj[:,2],c='black')
 ax.set_xlim([-1,30])
