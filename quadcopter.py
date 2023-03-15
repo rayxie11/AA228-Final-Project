@@ -22,16 +22,14 @@ class Quadcopter:
         Args:
             environment: environment quadcopter is in
         Return:
-            valid_action_mask: a mask for valid actions the quadcopter can take in current state
+            valid_actions: a list of indices of valid actions the quadcopter can take
         '''
-        # 1 if action can be performed, 0 otherwise
-        valid_action_mask = np.zeros(len(action2move))
+        valid_actions = []
         for a in action2move.keys():
             potential_s = self.s+action2move[a]
-            if environment.check_state_in_bound(potential_s):
-                if environment.check_state_in_obstacle(potential_s) == -1:
-                    valid_action_mask[a] = 1
-        return valid_action_mask
+            if environment.check_valid_state(potential_s):
+                valid_actions.append(a)
+        return valid_actions
     
     def in_wind(self, environment):
         '''
@@ -43,35 +41,31 @@ class Quadcopter:
         '''
         return environment.check_state_in_wind(self.s)
     
-    def transition_probability(self, environment):
+    def transition_probability(self, environment, valid_actions):
         '''
-        Get the probability of transitioning to the next state without any control input
-        The smaller different between wind direction and move direction, the higher probability
-        the quadcopter would take that action
+        Get the probability of transitioning to the next state. The smaller difference between 
+        wind direction and move direction, the higher probability the quadcopter would take 
+        that action
         Args:
             environment: environment quadcopter is in
+            valid_actions: valid actions the quadcopter can take in the current state
         Return:
         '''
         probability = []
-        valid_action_mask = self.generate_valid_actions(environment)
         wind_idx = self.in_wind(environment)
         if wind_idx == -1:
-            probability = valid_action_mask/np.sum(valid_action_mask)
+            probability = np.ones(len(valid_actions))/len(valid_actions)
         else:
-            w = environment.wind[wind_idx].sample_wind()
-            w /= np.linalg.norm(w)
-            for i in range(len(valid_action_mask)):
-                if valid_action_mask[i] == 0:
-                    probability.append(0)
+            wind_dir = environment.wind[wind_idx].sample_wind()
+            wind_dir = wind_dir/np.linalg.norm(wind_dir)
+            for action_idx in valid_actions:
+                a = action2move[action_idx]
+                # Use np.exp to avoid divide by 0 exception
+                if np.linalg.norm(a) == 0:
+                    diff = 1/np.exp(np.linalg.norm(wind_dir))
                 else:
-                    a = action2move[i]
-                    # Use np.exp to avoid divide by 0 exception
-                    if np.linalg.norm(a) == 0:
-                        diff = 1/np.exp(np.linalg.norm(w))
-                    else:
-                        diff = 1/np.exp(np.linalg.norm(w-a/np.linalg.norm(a)))
-                    #print(np.linalg.norm(w-a/np.linalg.norm(a)))
-                    probability.append(diff)
+                    diff = 1/np.exp(np.linalg.norm(wind_dir-a/np.linalg.norm(a)))
+                probability.append(diff)
             probability = probability/np.sum(probability)
         return np.array(probability)
     
@@ -86,38 +80,32 @@ class Quadcopter:
 
     def next_state(self, environment):
         '''
-        Calculate the next state with the transition probability
+        Get the next state with the transition probability
         Args:
             action: given action
             environment: environment quadcopter is in
         Return:
             action: index of actual action taken
         '''
-        T = self.transition_probability(environment)
-        print(T)
-        action = np.random.choice(actions,1,p=T)[0]
+        valid_actions = self.generate_valid_actions(environment)
+        T = self.transition_probability(environment, valid_actions)
+        #print(T)
+        action = np.random.choice(valid_actions,1,p=T)[0]
         self.s = self.s+action2move[action]
         return action
 
-    def next_state1(self, action, environment):
+    def next_state_with_random_exploration(self, environment):
         '''
-        Calculate the next state given action with the transition probability
+        Explore next state randomly
         Args:
-            action: given action
             environment: environment quadcopter is in
+            e: probability threshold
         Return:
             action: index of actual action taken
         '''
-        p = np.random.random(1)[0]
-        # If p <= 0.6, go with given action
-        if p <= 0.6 and action != -1:
-            self.s = self.s+action2move[action]
-        # Otherwise, sample action from transition probability
-        else:
-            T = self.transition_probability(environment)
-            print(T)
-            action = np.random.choice(actions,1,p=T)[0]
-            self.s = self.s+action2move[action]
+        valid_actions = self.generate_valid_actions(environment)
+        action = np.random.choice(valid_actions,1)[0]
+        self.s = self.s+action2move[action]
         return action
 
 
