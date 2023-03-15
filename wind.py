@@ -26,10 +26,10 @@ class Wind(Box):
         Return:
             discrete_wind: list of tuple, (probability, (velocity))
         '''
-        discrete_wind = [(0.5, (1, 1, 1)),
-                        (0.3, (2, 2, 2)),
-                        (0.1, (3, 3, 3)),
-                        (0.1, (-3, -3, -3))]
+        discrete_wind = [(0.5, (-1, 1, 1)),
+                        (0.3, (0, 1, 1)),
+                        (0.1, (-1, -1, -1)),
+                        (0.1, (-0.5, 0.5, 0.5))]
         
         return discrete_wind
     
