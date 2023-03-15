@@ -35,7 +35,6 @@ q.trajectory = np.array(q.trajectory)
 mdp = MDP(start, end, env)
 U, pi = mdp.value_iteration(0.95)
 traj = simulate(start, end, pi, env)
-print(traj.shape)
 
 box = Box([10,10,10],[0,0,0])
 print(box.check_point_inside([5,5,5]))
