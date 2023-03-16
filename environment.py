@@ -57,8 +57,8 @@ class Environment(Box):
         '''
         self.plot_box(ax, 'cyan', 0, 0.2)
         for obs in self.obstacles:
-            obs.plot_box(ax, 'black', 0, 1)
+            obs.plot_box(ax, 'yellow', 0, 1)
         for w in self.wind:
             w.plot_box(ax, 'red', 0, 0.5)
-            w.plot_wind(ax)
+            #w.plot_wind(ax)
     
