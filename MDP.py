@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from IPython.display import clear_output
 
 class MDP:
-    def __init__(self, init_s, goal_s, environment) -> None:
+    def __init__(self, init_s, goal_s, environment, n_iter) -> None:
         self.init_s = np.array(init_s)              # Initial state
         self.goal_s = np.array(goal_s)              # Goal state
         self.env = environment                      # Environment
@@ -15,6 +15,7 @@ class MDP:
         self.z = self.env.z+1                       # z dim
         self.pi = np.zeros(self.x*self.y*self.z)    # Initialize policy
         self.U = np.zeros(self.x*self.y*self.z)     # Initialize value function
+        self.n_iter = n_iter                        # Number of iteration
 
 
     def reward(self, s, a):
@@ -37,7 +38,7 @@ class MDP:
         action_S = action
         U_sum = [0]
 
-        for i in tqdm(range(10)):
+        for i in tqdm(range(self.n_iter)):
             #visited = np.zeros((self.x, self.y, self.z), dtype=bool)
             #to_visit = deque()
             #to_visit.append(self.goal_s)

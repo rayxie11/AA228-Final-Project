@@ -51,7 +51,8 @@ obs = [Box(obs_dim,obs_origin)]
 env = Environment(env_dim,env_origin,obs,w)
 
 # Train with wind
-mdp = MDP(start, end, env)
+n_iter = 20
+mdp = MDP(start, end, env, n_iter)
 U, pi, U_sum = mdp.value_iteration(0.95)
 plt.plot(U_sum)
 plt.show()
@@ -61,7 +62,7 @@ plot_result(traj, move, wind_s, wind_v, env, start, end)
 
 # Train without wind
 env = Environment(env_dim,env_origin,obs,[])
-mdp = MDP(start, end, env)
+mdp = MDP(start, end, env, n_iter)
 U, pi, U_sum = mdp.value_iteration(0.95)
 plt.plot(U_sum)
 plt.show()
