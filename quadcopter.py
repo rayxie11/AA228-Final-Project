@@ -5,7 +5,7 @@ action2move = {0:(1,0,0), 1:(-1,0,0), 2:(0,1,0), 3:(1,1,0), 4:(-1,1,0), 5:(0,1,1
            6:(1,1,1), 7:(-1,1,1), 8:(0,0,1), 9:(1,0,1), 10:(-1,0,1), 11:(0,-1,0),
            12:(1,-1,0), 13:(-1,-1,0), 14:(0,-1,-1), 15:(1,-1,-1), 16:(-1,-1,-1),
            17:(0,0,-1), 18:(1,0,-1), 19:(-1,0,-1), 20:(0,1,-1), 21:(1,1,-1),
-           22:(-1,1,-1), 23:(0,-1,1), 24:(1,-1,1), 25:(-1,-1,1)}
+           22:(-1,1,-1), 23:(0,-1,1), 24:(1,-1,1), 25:(-1,-1,1), 26:(0,0,0)}
 actions = []
 for a in action2move.keys():
     action2move[a] = np.array(action2move[a])
@@ -61,10 +61,13 @@ class Quadcopter:
             for action_idx in valid_actions:
                 a = action2move[action_idx]
                 # Use np.exp to avoid divide by 0 exception
+                #diff = 1/np.exp((wind_dir+a/np.linalg.norm(a))@a/np.linalg.norm(a))
+                #'''
                 if np.linalg.norm(a) == 0:
                     diff = 1/np.exp(np.linalg.norm(wind_dir))
                 else:
-                    diff = 1/np.exp(np.linalg.norm(wind_dir-a/np.linalg.norm(a)))
+                    diff = 1/np.exp((wind_dir+a/np.linalg.norm(a))@a)
+                #'''
                 probability.append(diff)
             probability = probability/np.sum(probability)
         return np.array(probability)
@@ -88,6 +91,8 @@ class Quadcopter:
             action: index of actual action taken
         '''
         valid_actions = self.generate_valid_actions(environment)
+        if len(valid_actions) == 0:
+            return -1
         T = self.transition_probability(environment, valid_actions)
         #print(T)
         action = np.random.choice(valid_actions,1,p=T)[0]
@@ -104,6 +109,8 @@ class Quadcopter:
             action: index of actual action taken
         '''
         valid_actions = self.generate_valid_actions(environment)
+        if len(valid_actions) == 0:
+            return -1
         action = np.random.choice(valid_actions,1)[0]
         self.s = self.s+action2move[action]
         return action

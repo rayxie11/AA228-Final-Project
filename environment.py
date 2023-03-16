@@ -33,6 +33,8 @@ class Environment(Box):
     def check_valid_state(self, state):
         '''
         Check whether the given state is valid: in bounds and not in obstacle
+        Return:
+            True/False: given state is valid or invalid
         '''
         return self.check_state_in_bound(state) and not self.check_state_in_obstacle(state)
     
