@@ -57,17 +57,15 @@ class Quadcopter:
             probability = np.ones(len(valid_actions))/len(valid_actions)
         else:
             wind_dir = environment.wind[wind_idx].sample_wind()
-            wind_dir = wind_dir/np.linalg.norm(wind_dir)
+            #wind_dir = wind_dir/np.linalg.norm(wind_dir)
             for action_idx in valid_actions:
                 a = action2move[action_idx]
                 # Use np.exp to avoid divide by 0 exception
-                #diff = 1/np.exp((wind_dir+a/np.linalg.norm(a))@a/np.linalg.norm(a))
-                #'''
                 if np.linalg.norm(a) == 0:
-                    diff = 1/np.exp(np.linalg.norm(wind_dir))
+                    diff = np.exp(0)
                 else:
-                    diff = 1/np.exp((wind_dir+a/np.linalg.norm(a))@a)
-                #'''
+                    #diff = np.exp((wind_dir+a/np.linalg.norm(a))@a)
+                    diff = np.exp((wind_dir+a)@a)
                 probability.append(diff)
             probability = probability/np.sum(probability)
         return np.array(probability)

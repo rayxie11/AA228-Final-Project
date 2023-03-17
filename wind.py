@@ -46,9 +46,14 @@ class Wind(Box):
                                  np.arange(self.origin[1],self.origin[1]+self.y,2),
                                  np.arange(self.origin[2],self.origin[2]+self.z,2))
         w = self.mean/np.linalg.norm(self.mean)
+        '''
         U = XX+w[0]
         V = YY+w[1]
         W = ZZ+w[2]
+        '''
+        U = w[0]*10
+        V = w[1]*10
+        W = w[2]*10
         ax.quiver(XX, YY, ZZ, U, V, W, length=0.05, color='red')
 
         
