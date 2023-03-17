@@ -22,19 +22,6 @@ class Wind(Box):
         idx_arr = np.linspace(0, len(self.dir)-1, num=len(self.dir))
         dir_idx = int(np.random.choice(idx_arr, 1, p=self.prob)[0])
         return self.dir[dir_idx]
-        
-    def discrete_wind(self):
-        '''
-        Descrete wind distribution
-        Return:
-            discrete_wind: list of tuple, (probability, (velocity))
-        '''
-        discrete_wind = [(0.5, (1, 1, 1)),
-                        (0.3, (2, 2, 2)),
-                        (0.1, (3, 3, 3)),
-                        (0.1, (-3, -3, -3))]
-        
-        return discrete_wind
     
     def plot_wind(self, ax):
         '''

@@ -21,8 +21,9 @@ dir = [[1,1,1],[2,2,2],[3,3,3],[-3,-3,-3]]
 #dir = [[-3,-3,-3],[-2,-2,-2],[-1,-1,-1],[-5,-5,-5]]
 w = [Wind(w_dim,w_origin,prob,dir)]
 
-lrs = [0.05,0.06,0.07,0.08,0.09,0.1,0.12,0.14,0.16,0.18,0.2,0.25,0.3,0.4,0.45,0.5]
+lrs = np.array([0.05,0.06,0.07,0.08,0.09,0.1,0.12,0.14,0.16,0.18,0.2,0.25,0.3,0.4,0.45,0.5])
 steps = []
+
 for lr in lrs:
     env = Environment(env_dim,env_origin,obs,w)
     start = [1,1,1]
@@ -47,37 +48,8 @@ for lr in lrs:
     plt.legend()
     plt.savefig(str(lr)+'.png')
 
-print(steps)
-
-'''
-env = Environment(env_dim,env_origin,obs,w)
-
-start = [1,1,1]
-end = [17,17,17]
-q = QLearning(start, end, env)
-q.naive_qlearning(0.3,0.95)
-print("finished q learning")
-#q.trajectory = np.array(q.trajectory)
-traj = q.generate_trajectory()
-#print(traj.shape)
-
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-env.plot_env(ax)
-ax.scatter(1,1,1,c='r',label='inital state')
-ax.scatter(17,17,17,c='g',label='goal state')
-ax.scatter(traj[:,0],traj[:,1],traj[:,2],c='black',label='trajectory')
-#ax.scatter(q.trajectory[:,0],q.trajectory[:,1],q.trajectory[:,2],c='black')
-ax.set_xlim([-5,25])
-ax.set_ylim([-5,25])
-ax.set_zlim([-5,25])
-#ax.set_xticks([])
-#ax.set_yticks([])
-#ax.set_zticks([])
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
-plt.legend()
+plt.plot(lrs,np.array(steps))
+plt.xlabel('Learing Rate')
+plt.ylabel('Number of Steps')
+plt.title('Learning Rate vs. Steps taken to reach Goal State from generated policy')
 plt.show()
-'''

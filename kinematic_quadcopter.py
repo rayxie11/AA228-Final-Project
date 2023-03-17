@@ -153,10 +153,7 @@ class KinematicQuadcopter:
         '''
         if ori[0] >= np.pi or ori[1] >= np.pi or ori[2] >= np.pi:
             return False
-        #print("state in bound", env.check_state_in_bound(pos))
-        #print("state in obs", env.check_state_in_obstacle(pos))
         if not env.check_state_in_bound(pos) or env.check_state_in_obstacle(pos) != -1:
-            #print('here')
             return False
         return True
 
@@ -182,24 +179,12 @@ class KinematicQuadcopter:
         temp_ori = self.ori+temp_thetadot*dt
         temp_v = self.v+a*dt
         temp_pos = self.pos+temp_v*dt
-        print(temp_pos, temp_ori)
         if self.check_valid_update(temp_pos, temp_ori, env):
             new_quadcopter = KinematicQuadcopter(temp_pos, temp_v, self.mass, self.dim, self.t_max, self.t_min)
             return new_quadcopter
         else:
-            #print(temp_pos, temp_ori)
             return False
-        ''' 
-        self.thetadot2omega()
-        a = self.acceleration(inputs)
-        omegadot = self.angular_acceleration(inputs)
-        self.w += omegadot*dt
-        self.omega2thetadot()
-        self.ori += self.thetadot*dt
-        self.v += a*dt
-        self.pos += self.v*dt
-        '''
-    
+        
     def sample(self, env):
         '''
         Sample next time step quadcopter state
@@ -213,11 +198,8 @@ class KinematicQuadcopter:
         combinations = np.reshape(combinations,(11**4,4))
         sampled_quadcopter = []
         for inputs in combinations:
-            #print(inputs)
             new_quadcopter = self.update(1, env, inputs)
-            #print(new_quadcopter)
             if new_quadcopter:
                 sampled_quadcopter.append(new_quadcopter)
-            #break
         return sampled_quadcopter
         

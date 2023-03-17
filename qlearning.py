@@ -9,7 +9,6 @@ class QLearning:
         self.env = environment                     # Environment
         self.quadcopter = Quadcopter(self.init_s)  # Initialize quadcopter
         self.generate_Q_table()
-        #self.trajectory = []                       # Trajectory generated from Q table
     
     def generate_Q_table(self):
         '''
@@ -60,10 +59,8 @@ class QLearning:
         all_state = np.stack([XX,YY,ZZ],axis=-1)
         tot = len(x)*len(y)*len(z)
         all_state = np.reshape(all_state, (tot,3))
-        print(all_state.shape)
         j = 0
         for state in all_state:
-            print(j)
             if not self.env.check_valid_state(state):
                 j += 1
                 continue
@@ -100,14 +97,10 @@ class QLearning:
         traj = []
         cur_state = np.array(self.init_s)
         i = 0
-        #while np.linalg.norm(cur_state-np.array(self.goal_s)) != 0 and i < 100:
         while np.linalg.norm(cur_state-np.array(self.goal_s)) > np.sqrt(3):
-            #print(cur_state)
             traj.append(cur_state)
             visited[cur_state[0],cur_state[1],cur_state[2]] = 1
             best_action_ls = np.argsort(self.Q_table[cur_state[0],cur_state[1],cur_state[2]])
-            #print(self.Q_table[cur_state[0],cur_state[1],cur_state[2]])
-            #print(best_action_ls)
             j = self.quadcopter.a_count-1
             pos_state = cur_state+action2move[best_action_ls[j]]
             while j > 0:
@@ -117,12 +110,7 @@ class QLearning:
                 j -= 1
                 pos_state = cur_state+action2move[best_action_ls[j]]
             cur_state = pos_state
-            #print(best_action_idx)
-            #best_action = np.array(action2move[best_action_idx])
-            #cur_state += best_action
             i += 1
-            #break
-        #print(i)
         traj.append(cur_state)
         return np.array(traj), i
         
