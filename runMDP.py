@@ -13,10 +13,10 @@ def plot_result(traj, move, wind_s, wind_v, env, start, end):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     env.plot_env(ax)
-    ax.scatter(start[0],start[1],start[2],c='r')
-    ax.scatter(end[0],end[1],end[2],c='g')
+    ax.scatter(start[0],start[1],start[2],c='r',label='inital state')
+    ax.scatter(end[0],end[1],end[2],c='g',label='goal state')
 
-    ax.scatter(traj[:,0],traj[:,1],traj[:,2],c='black')
+    ax.scatter(traj[:,0],traj[:,1],traj[:,2],c='black',label='trajectory')
     plot_arrow(traj, move, ax, 'black')
     if len(wind_s)>1:
         wind_s = np.vstack(wind_s)
@@ -28,6 +28,7 @@ def plot_result(traj, move, wind_s, wind_v, env, start, end):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
+    plt.legend()
     plt.show()
 
 start = [1,1,1]
@@ -37,11 +38,11 @@ env_origin = [0,0,0]
 env_dim = [20,20,10]
 
 obs_origin = [5,8,1]
-obs_dim = [4,4,8]
+obs_dim = [5,4,8]
 
 w_origin = [4,3,3]
 w_dim = [5,5,5]
-prob = [0.9,0.1,0.0,0.0]
+prob = [0.7,0.1,0.1,0.1]
 dir = [(1, 1, 0),
         (0.5, 0.5, 0),
         (0.5, 0, 0.5),
@@ -51,11 +52,13 @@ obs = [Box(obs_dim,obs_origin)]
 env = Environment(env_dim,env_origin,obs,w)
 
 # Train with wind
-n_iter = 20
+n_iter = 10
 mdp = MDP(start, end, env, n_iter)
 U, pi, U_sum = mdp.value_iteration(0.95)
-plt.plot(U_sum)
-plt.show()
+#plt.plot(U_sum)
+#plt.xlabel('Number of Iterations')
+#plt.ylabel('Total Utility')
+#plt.show()
 
 traj, move, wind_s, wind_v = simulate(start, end, pi, env)
 plot_result(traj, move, wind_s, wind_v, env, start, end)
@@ -64,8 +67,8 @@ plot_result(traj, move, wind_s, wind_v, env, start, end)
 env = Environment(env_dim,env_origin,obs,[])
 mdp = MDP(start, end, env, n_iter)
 U, pi, U_sum = mdp.value_iteration(0.95)
-plt.plot(U_sum)
-plt.show()
+#plt.plot(U_sum)
+#plt.show()
 
 env = Environment(env_dim,env_origin,obs,w)
 traj, move, wind_s, wind_v = simulate(start, end, pi, env)

@@ -26,6 +26,11 @@ class MDP:
             return -100
         #r = -np.linalg.norm(self.goal_s-s)
         r = -np.sum(np.abs(self.goal_s-s))
+        '''
+        if np.all(s == self.goal_s):
+            return 1000
+        '''
+        #r = 0
         return r
 
     
